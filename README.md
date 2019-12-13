@@ -40,12 +40,14 @@ Pre-train the model.
 $ cd pre-train
 $ bash run.sh
 ```
-Run the inference code to generate audio samples on multi-speaker dataset.
+Run the inference code to generate audio samples on multi-speaker dataset. During inference, our model can be run on either TTS (using text inputs) or VC (using Mel-spectrogram
+inputs) mode.
 ```bash
 $ python inference.py
 ```
 ### Fine-tune the model
-Fine-tune the model and generate audio samples on conversion pair. 
+Fine-tune the model and generate audio samples on conversion pair. During inference, our model can be run on either TTS (using text inputs) or VC (using Mel-spectrogram
+inputs) mode.
 ```bash
 $ cd fine-tune
 $ bash run.sh
