@@ -23,7 +23,7 @@ It is recommended you download the [VCTK](http://homepages.inf.ed.ac.uk/jyamagis
 Install Python dependencies.
 
 ```bash
-nonparaSeq2SeqVC_code$ pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 ### Feature Extraction
