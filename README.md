@@ -12,6 +12,10 @@ For audio samples, please visit our [demo page](https://jxzhanggg.github.io/nonp
 * PyTorch 1.0.1
 * CUDA 10.0
 
+## Data
+
+It is recommended you download the [VCTK](http://homepages.inf.ed.ac.uk/jyamagis/page3/page58/page58.html) and [CMU-ARCTIC](http://www.speech.cs.cmu.edu/cmu_arctic/packed/) datasets.
+
 ## Usage
 
 ### Installation
@@ -22,11 +26,9 @@ Install Python dependencies.
 nonparaSeq2SeqVC_code$ pip install -r requirements.txt
 ```
 
-### Data pre-processing
+### Feature Extraction
 
-It is recommended you download the [VCTK](http://homepages.inf.ed.ac.uk/jyamagis/page3/page58/page58.html) and [CMU-ARCTIC](http://www.speech.cs.cmu.edu/cmu_arctic/packed/) datasets.
-
-#### Extract the Mel-Spectrograms
+#### Extract Mel-Spectrograms
 
 Install and use [Deepvoice3_pytorch](https://github.com/r9y9/deepvoice3_pytorch) for extracting audio features.
 
@@ -44,7 +46,7 @@ Use the `grapheme-to-phoneme` module of [Festival](http://www.cstr.ed.ac.uk/proj
 
 ### Customize data reader
 
-If you use data other than VCTK or CMU-arctic, you will need to modify the data reader to read your training data. The following are scripts you will need to modify:
+If you use data other than VCTK or CMU-arctic, you will need to modify the data reader to read your training data. The following are scripts you will need to modify.
 
 For pre-training:
 
@@ -60,7 +62,7 @@ For fine-tuning:
 
 ### Pre-train the model
 
-Add correct paths to our local data, and run the bash script:
+Add correct paths to your local data, and run the bash script:
 
 ```bash
 $ cd pre-train
