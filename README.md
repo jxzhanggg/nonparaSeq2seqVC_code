@@ -14,50 +14,81 @@ For audio samples, please visit our [demo page](https://jxzhanggg.github.io/nonp
 
 ## Usage
 
-### Prepare training data
-Prepare training data by downloading [VCTK](http://homepages.inf.ed.ac.uk/jyamagis/page3/page58/page58.html) and [CMU-ARCTIC](http://www.speech.cs.cmu.edu/cmu_arctic/packed/) datasets.
-Extract the Mel-spectrograms and phonemes. This repo
-doesn't include this part code. However, you can refer to 
-the preprocess code of [Deepvoice3_pytorch](https://github.com/r9y9/deepvoice3_pytorch).
-### Customize data reader
-Modify the following code of data reader to read your prepared training data.
+### Installation
+
+Install Python dependencies.
+
+```bash
+nonparaSeq2SeqVC_code$ pip install -r requirements.txt
 ```
-.
-├── pre-train
-├───────────|── reader |
-├───────────|──────────|── reader.py
-├───────────|──────────|── symbols.py
-.
-├── fine-tune
-├───────────|── reader |
-├───────────|──────────|── reader.py
-├───────────|──────────|── symbols.py
+
+### Data pre-processing
+
+It is recommended you download the [VCTK](http://homepages.inf.ed.ac.uk/jyamagis/page3/page58/page58.html) and [CMU-ARCTIC](http://www.speech.cs.cmu.edu/cmu_arctic/packed/) datasets.
+
+#### Extract the Mel-Spectrograms
+
+Install and use [Deepvoice3_pytorch](https://github.com/r9y9/deepvoice3_pytorch) for extracting audio features.
+
+For VCTK, you can use the following:
+
+```bash
+deepvoice$ python preprocess.py --preset=presets/deepvoice3_vctk.json vctk VCTK-Corpus/ VCTK-processed/
 
 ```
+
+#### Extract Phonemes
+
+Use the `grapheme-to-phoneme` module of [Festival](http://www.cstr.ed.ac.uk/projects/festival/) to obtain the inputs for the text encoder. 
+
+
+### Customize data reader
+
+If you use data other than VCTK or CMU-arctic, you will need to modify the data reader to read your training data. The following are scripts you will need to modify:
+
+For pre-training:
+
+- [`reader.py`](https://github.com/jxzhanggg/nonparaSeq2seqVC_code/blob/master/pre-train/reader/reader.py)
+- [`symbols.py`](https://github.com/jxzhanggg/nonparaSeq2seqVC_code/blob/master/pre-train/reader/symbols.py)
+
+For fine-tuning:
+
+- [`reader.py`](https://github.com/jxzhanggg/nonparaSeq2seqVC_code/blob/master/fine-tune/reader/reader.py)
+- [`symbols.py`](https://github.com/jxzhanggg/nonparaSeq2seqVC_code/blob/master/fine-tune/reader/symbols.py)
+
+
+
 ### Pre-train the model
-Pre-train the model. 
+
+Add correct paths to our local data, and run the bash script:
+
 ```bash
 $ cd pre-train
 $ bash run.sh
 ```
-Run the inference code to generate audio samples on multi-speaker dataset. During inference, our model can be run on either TTS (using text inputs) or VC (using Mel-spectrogram
-inputs) mode.
+
+Run the inference code to generate audio samples on multi-speaker dataset. During inference, our model can be run on either TTS (using text inputs) or VC (using Mel-spectrogram inputs) mode.
+
 ```bash
 $ python inference.py
 ```
+
 ### Fine-tune the model
-Fine-tune the model and generate audio samples on conversion pair. During inference, our model can be run on either TTS (using text inputs) or VC (using Mel-spectrogram
-inputs) mode.
+
+Fine-tune the model and generate audio samples on conversion pair. During inference, our model can be run on either TTS (using text inputs) or VC (using Mel-spectrogram inputs) mode.
+
 ```bash
 $ cd fine-tune
 $ bash run.sh
 ```
 
-## Reference
+## References
+
 * "Non-Parallel Sequence-to-Sequence Voice Conversion with Disentangled Linguistic and Speaker Representations", Jing-Xuan Zhang, Zhen-Hua Ling, Li-Rong Dai, accepted by IEEE/ACM Transactions on Aduio, Speech and Language Processing, 2019.
 * "Sequence-to-Sequence Acoustic Modeling for Voice Conversion", Jing-Xuan Zhang, Zhen-Hua Ling, Li-Juan Liu, Yuan Jiang, Li-Rong Dai, IEEE/ACM Transactions on Audio, Speech and Language Processing, vol. 27, no. 3, pp. 631-644, March 2019.
 * "Forward Attention in Sequence-to-sequence Acoustic Modelling for Speech Synthesis", Jing-Xuan Zhang, Zhen-Hua Ling, Li-Rong Dai, ICASSP, pp. 4789–4793, 2018.
 
 ## Acknowledgements
+
 Part of code was adapted from the following project:
 * https://github.com/NVIDIA/tacotron2/
