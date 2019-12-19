@@ -41,7 +41,11 @@ deepvoice$ python preprocess.py --preset=presets/deepvoice3_vctk.json vctk VCTK-
 
 #### Extract Phonemes
 
-Use the `grapheme-to-phoneme` module of [Festival](http://www.cstr.ed.ac.uk/projects/festival/) to obtain the inputs for the text encoder. 
+It's suggested to use the `grapheme-to-phoneme` module of [Festival](http://www.cstr.ed.ac.uk/projects/festival/) to obtain the inputs for the text encoder. An easy way to do this is with the [`phonemizer`](https://github.com/bootphon/phonemizer) tool, with Festival as a backend:
+
+```bash
+$ phonemize -b festival -l en-us transcripts.txt -o transcripts.phones --strip
+```
 
 
 ### Customize data reader
