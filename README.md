@@ -30,7 +30,7 @@ $ pip install -r requirements.txt
 
 #### Extract Mel-Spectrograms
 
-Install and use [Deepvoice3_pytorch](https://github.com/r9y9/deepvoice3_pytorch) for extracting audio features.
+Install and use [deepvoice3_pytorch](https://github.com/r9y9/deepvoice3_pytorch) for extracting audio features.
 
 For VCTK, you can use the following:
 
