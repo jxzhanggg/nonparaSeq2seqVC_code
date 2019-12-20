@@ -36,11 +36,8 @@ def levenshteinDistance(s1, s2):
     return distances[-1]
 
 
-def recover_wav(mel, wav_path, mel_mean_std, ismel=False):
-    n_fft = 2048
-    win_length=800
-    hop_length=200
-
+def recover_wav(mel, wav_path, mel_mean_std, ismel=False,
+        n_fft = 2048,win_length=800, hop_length=200):
     if ismel:
         mean, std = np.load(mel_mean_std)
     else:
