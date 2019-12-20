@@ -2,8 +2,17 @@ import torch
 import torch.utils.data
 import random
 import numpy as np
-from symbols import ph2id, sp2id, read_text
+from symbols import ph2id, sp2id
 from torch.utils.data import DataLoader
+
+def read_text(fn):
+    text = []
+    with open(fn) as f:
+        lines = f.readlines()
+        for line in lines:
+            start, end, phone = line.strip().split()
+            text.append([int(start), int(end), phone])
+    return text
 
 class TextMelIDLoader(torch.utils.data.Dataset):
     
