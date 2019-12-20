@@ -64,50 +64,33 @@ class TextMelIDLoader(torch.utils.data.Dataset):
         text_path = text_path.replace('text_trim', 'text')
         mel_path = mel_path.replace('mel_trim', 'mel')
 
-        text_input, text_targets, text_ranks = self.get_text(text_path)
+        text_input = self.get_text(text_path)
         mel = np.load(mel_path)
         mel = (mel - self.mel_mean_std[0])/ self.mel_mean_std[1]
 
         spc = np.load(path)
         spc = (spc - self.spc_mean_std[0]) / self.spc_mean_std[1]
 
-        if len(text_targets)< len(mel):
-            #padding text:
-            pad = len(mel) - len(text_targets)
-            text_targets.extend(text_targets[-1:] * pad)
-            text_ranks.extend(text_ranks[-1:] * pad)
-        else:
-            text_targets = text_targets[:len(mel)]
-            text_ranks = text_ranks[:len(mel)]
-
         speaker_id = path.split('/')[-3].split('_')[2]
         speaker_id = [self.sp2id[speaker_id]]
     
         text_input = torch.LongTensor(text_input)
-        text_targets = torch.LongTensor(text_targets)
         mel = torch.from_numpy(np.transpose(mel))
         spc = torch.from_numpy(np.transpose(spc))
         speaker_id = torch.LongTensor(speaker_id)
 
-        return (text_input, text_targets, mel, spc, speaker_id, text_ranks)
+        return (text_input, mel, spc, speaker_id)
         
     def get_text(self,text_path):
 
         text = read_text(text_path)
         text_input = []
-        text_targets = []
-        text_ranks = []
 
-        text_count = 0
         for start, end, ph in text:
             dur = int((end - start) / 125000. + 0.6)
             text_input.append(ph2id[ph])
-            text_targets.extend([ph2id[ph]] * dur)
-            text_ranks.extend([text_count]* dur)
-
-            text_count += 1
         
-        return text_input, text_targets, text_ranks
+        return text_input
 
     def __getitem__(self, index):
         return self.get_text_mel_id_pair(self.file_path_list[index])
@@ -152,13 +135,13 @@ class TextMelIDCollate():
 
         for i in range(len(batch)):
             text =  batch[i][0]
-            mel = batch[i][2]
-            spc = batch[i][3]
+            mel = batch[i][1]
+            spc = batch[i][2]
 
             text_input_padded[i,:text.size(0)] = text 
             mel_padded[i,  :, :mel.size(1)] = mel
             spc_padded[i,  :, :spc.size(1)] = spc
-            speaker_id[i] = batch[i][4][0]
+            speaker_id[i] = batch[i][3][0]
             gate_padded[i, mel.size(1)-self.n_frames_per_step:] = 1 #make sure the downsampled gate_padded have the last eng flag 1. 
 
 

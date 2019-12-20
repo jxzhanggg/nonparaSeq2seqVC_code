@@ -34,7 +34,7 @@ hparams = create_hparams(args.hparams)
 test_list = hparams.validation_list
 checkpoint_path=args.checkpoint_path
 gen_num = args.num
-
+ISMEL=(not hparams.predict_spectrogram)
 
 
 model = load_model(hparams)
@@ -81,11 +81,11 @@ test_loader_B = DataLoader(test_set_B, num_workers=1, shuffle=False,
 id2sp[0] = hparams.speaker_A
 id2sp[1] = hparams.speaker_B
 
-_, __, mel, ___, speaker_id, ____ = train_set_A[0]
+_, mel, __, speaker_id = train_set_A[0]
 reference_mel_A = speaker_id.cuda()
 ref_sp_A = id2sp[speaker_id.item()]
 
-_, __, mel, ___, speaker_id, ____ = train_set_B[0]
+_, mel, __, speaker_id = train_set_B[0]
 reference_mel_B = speaker_id.cuda()
 ref_sp_B = id2sp[speaker_id.item()]
 
@@ -147,7 +147,7 @@ def generate(loader, reference_mel, beam_width, path_save, ref_sp,
             recover_wav(post_output, 
                         os.path.join(path_save, 'wav_mel/Wav_%s_ref_%s_%s.wav'%(sample_id, ref_sp, task)),
                         hparams.mel_mean_std, 
-                        ismel=True)
+                        ismel=ISMEL)
             
             post_output_path = os.path.join(path_save, 'mel/Mel_%s_ref_%s_%s.npy'%(sample_id, ref_sp, task))
             np.save(post_output_path, post_output)

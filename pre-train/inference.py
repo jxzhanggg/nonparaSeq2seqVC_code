@@ -30,6 +30,7 @@ checkpoint_path='outdir/checkpoint_0'
 input_text=False
 # number of utterances for generation
 NUM=10
+ISMEL=(not hparams.predict_spectrogram)
 #####################################
 
 def plot_data(data, fn, figsize=(12, 4)):
@@ -70,11 +71,9 @@ if not os.path.exists(path_save):
 
 print path_save
 
-def recover_wav(mel, wav_path, ismel=False):
-    n_fft = 2048
-    win_length=800
-    hop_length=200
-
+def recover_wav(mel, wav_path, ismel=False, 
+        n_fft=2048, win_length=800,hop_length=200):
+    
     if ismel:
         mean, std = np.load(hparams.mel_mean_std)
     else:
@@ -156,7 +155,7 @@ with torch.no_grad():
 
         recover_wav(post_output, 
                     os.path.join(path_save, 'Wav_%s_ref_%s_%s.wav'%(sample_id, ref_sp, task)), 
-                    ismel=True)
+                    ismel=ISMEL)
         
         post_output_path = os.path.join(path_save, 'Mel_%s_ref_%s_%s.npy'%(sample_id, ref_sp, task))
         np.save(post_output_path, post_output)
