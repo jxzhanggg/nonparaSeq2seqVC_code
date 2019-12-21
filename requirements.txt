@@ -4,3 +4,6 @@ numpy
 typing
 tensorboardX
 matplotlib
+phonemize
+librosa
+multiprocessing
