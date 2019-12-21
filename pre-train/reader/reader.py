@@ -23,7 +23,7 @@ class TextMelIDLoader(torch.utils.data.Dataset):
     def __init__(self, list_file, mean_std_file, shuffle=True):
         '''
         list_file: 3-column: (path, n_frames, n_phones)
-        mean_std_file: tensor loadable into numpy, of shape (feat_dims, 2)
+        mean_std_file: tensor loadable into numpy, of shape (2, feat_dims), i.e. [mean_row, std_row]
         '''
         file_path_list = []
         with open(list_file) as f:
