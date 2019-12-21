@@ -42,7 +42,6 @@ def extract_phonemes(filename):
     with open(filename.replace(".txt", ".phones"), "w") as outfile:
         print(phones, file=outfile)
 
-    
 def extract_dir(root, kind):
     if kind =="audio":
         extraction_function=extract_mel_spec
@@ -51,9 +50,12 @@ def extract_dir(root, kind):
         extraction_function=extract_phonemes
         ext=".txt"
     else:
-        print("ERROR")
+        print("ERROR: invalid args")
         sys.exit(1)
-
+    if not os.path.isdir(root):
+        print("ERROR: invalid args")
+        sys.exit(1)
+        
     # traverse over all subdirs of the provided dir, and find
     # only files with the proper extension
     abs_paths=[]
