@@ -6,23 +6,37 @@ from multiprocessing import Pool, cpu_count
 import sys
     
 def extract_mel_spec(filename):
+    '''
+    extract and save both log-linear and log-Mel spectrograms.
+    '''
     y, sample_rate = librosa.load(filename)
-    mel_spec = librosa.feature.melspectrogram(y=y,
-                                              sr=sample_rate,
-                                              n_fft=2048,
-                                              hop_length=200,
-                                              win_length=800,
-                                              window='hann',
-                                              center=True,
-                                              pad_mode='reflect',
-                                              power=1.0,
-                                              n_mels=80,
-                                              fmin=0.0,
-                                              fmax=None,
-                                              htk=False,
-                                              norm=1)
 
-    np.save(file=filename.replace(".wav", ".spec"), arr=mel_spec)
+    spec = librosa.core.stft(y=y, 
+                             n_fft=2048, 
+                             hop_length=200, 
+                             win_length=800,
+                             window='hann',
+                             center=True,
+                             pad_mode='reflect')
+    spec= librosa.magphase(spec)[0]
+    log_spectrogram = np.log(spec).astype(np.float32)
+
+    mel_spectrogram = librosa.feature.melspectrogram(S=spec, 
+                                                     sr=sample_rate, 
+                                                     n_mels=n_mels,
+                                                     power=1.0, #actually not used given "S=spec"
+                                                     fmin=0.0,
+                                                     fmax=None,
+                                                     htk=False
+                                                     norm=1
+                                                     )
+    log_mel_spectrogram = np.log(mel_spectrogram).astype(np.float32)
+
+
+    
+    np.save(file=filename.replace(".wav", ".spec"), arr=log_spectrogram])
+    np.save(file=filename.replace(".wav", ".mel"), arr=log_mel_spectrogram)
+
 
 def extract_phonemes(filename):
     from phonemizer.phonemize import phonemize
