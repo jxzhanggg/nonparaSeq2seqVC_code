@@ -23,7 +23,7 @@ def extract_mel_spec(filename):
 
     mel_spectrogram = librosa.feature.melspectrogram(S=spec, 
                                                      sr=sample_rate, 
-                                                     n_mels=n_mels,
+                                                     n_mels=80,
                                                      power=1.0, #actually not used given "S=spec"
                                                      fmin=0.0,
                                                      fmax=None,
