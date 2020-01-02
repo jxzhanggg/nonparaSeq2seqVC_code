@@ -2,7 +2,7 @@ import torch
 import torch.utils.data
 import random
 import numpy as np
-from symbols import ph2id
+from .symbols import ph2id
 from torch.utils.data import DataLoader
 
 def read_text(fn):

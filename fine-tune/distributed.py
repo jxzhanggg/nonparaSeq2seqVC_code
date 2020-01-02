@@ -59,7 +59,7 @@ class DistributedDataParallel(Module):
 
         self.module = module
 
-        for p in self.module.state_dict().values():
+        for p in list(self.module.state_dict().values()):
             if not torch.is_tensor(p):
                 continue
             dist.broadcast(p, 0)
@@ -76,9 +76,9 @@ class DistributedDataParallel(Module):
                         buckets[tp].append(param)
                 if self.warn_on_half:
                     if torch.cuda.HalfTensor in buckets:
-                        print("WARNING: gloo dist backend for half parameters may be extremely slow." +
+                        print(("WARNING: gloo dist backend for half parameters may be extremely slow." +
                               " It is recommended to use the NCCL backend in this case. This currently requires" +
-                              "PyTorch built from top of tree master.")
+                              "PyTorch built from top of tree master."))
                         self.warn_on_half = False
 
                 for tp in buckets:
@@ -128,7 +128,7 @@ def apply_gradient_allreduce(module):
         else:
             module.warn_on_half = True if dist._backend == dist.dist_backend.GLOO else False
 
-        for p in module.state_dict().values():
+        for p in list(module.state_dict().values()):
             if not torch.is_tensor(p):
                 continue
             dist.broadcast(p, 0)
@@ -145,9 +145,9 @@ def apply_gradient_allreduce(module):
                         buckets[tp].append(param)
                 if module.warn_on_half:
                     if torch.cuda.HalfTensor in buckets:
-                        print("WARNING: gloo dist backend for half parameters may be extremely slow." +
+                        print(("WARNING: gloo dist backend for half parameters may be extremely slow." +
                               " It is recommended to use the NCCL backend in this case. This currently requires" +
-                              "PyTorch built from top of tree master.")
+                              "PyTorch built from top of tree master."))
                         module.warn_on_half = False
 
                 for tp in buckets:

@@ -3,9 +3,9 @@ import numpy as np
 from torch import nn
 from torch.autograd import Variable
 from math import sqrt
-from utils import to_gpu
-from decoder import Decoder
-from layers import SpeakerClassifier, SpeakerEncoder, AudioSeq2seq, TextEncoder,  PostNet, MergeNet
+from .utils import to_gpu
+from .decoder import Decoder
+from .layers import SpeakerClassifier, SpeakerEncoder, AudioSeq2seq, TextEncoder,  PostNet, MergeNet
 
 
 class Parrot(nn.Module):

@@ -126,6 +126,6 @@ def create_hparams(hparams_string=None, verbose=False):
         hparams.parse(hparams_string)
 
     if verbose:
-        tf.logging.info('Final parsed hparams: %s', hparams.values())
+        tf.logging.info('Final parsed hparams: %s', list(hparams.values()))
 
     return hparams

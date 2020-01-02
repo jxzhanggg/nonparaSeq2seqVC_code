@@ -1,2 +1,2 @@
 from .reader import TextMelIDLoader, TextMelIDCollate
-from symbols import sp2id, id2sp, id2ph
+from .symbols import sp2id, id2sp, id2ph

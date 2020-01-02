@@ -2,9 +2,9 @@ import torch
 from torch.autograd import Variable
 from torch import nn
 from torch.nn import functional as F
-from basic_layers import sort_batch, ConvNorm, LinearNorm, Attention, tile
-from utils import get_mask_from_lengths
-from beam import Beam, GNMTGlobalScorer
+from .basic_layers import sort_batch, ConvNorm, LinearNorm, Attention, tile
+from .utils import get_mask_from_lengths
+from .beam import Beam, GNMTGlobalScorer
         
 class SpeakerClassifier(nn.Module):
     '''

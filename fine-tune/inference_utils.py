@@ -24,7 +24,7 @@ def levenshteinDistance(s1, s2):
     if len(s1) > len(s2):
         s1, s2 = s2, s1
 
-    distances = range(len(s1) + 1)
+    distances = list(range(len(s1) + 1))
     for i2, c2 in enumerate(s2):
         distances_ = [i2+1]
         for i1, c1 in enumerate(s1):

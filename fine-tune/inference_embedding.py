@@ -57,7 +57,7 @@ def gen_embedding(speaker):
 
         speaker_embeddings = np.vstack(speaker_embeddings)
         
-    print speaker_embeddings.shape
+    print(speaker_embeddings.shape)
     if not os.path.exists('outdir/embeddings'):
         os.makedirs('outdir/embeddings')
     
@@ -66,8 +66,8 @@ def gen_embedding(speaker):
         'outdir/embeddings/%s.pdf'%speaker)
 
 
-print 'Generating embedding of %s ...'%hparams.speaker_A
+print('Generating embedding of %s ...'%hparams.speaker_A)
 gen_embedding(hparams.speaker_A)
 
-print 'Generating embedding of %s ...'%hparams.speaker_B
+print('Generating embedding of %s ...'%hparams.speaker_B)
 gen_embedding(hparams.speaker_B)

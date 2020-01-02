@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
-from utils import get_mask_from_lengths
+from .utils import get_mask_from_lengths
 
 class ParrotLoss(nn.Module):
     def __init__(self, hparams):

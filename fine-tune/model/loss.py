@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
-from utils import get_mask_from_lengths
+from .utils import get_mask_from_lengths
 
 
 
@@ -206,14 +206,14 @@ def torch_test_grad():
     loss1.backward(retain_graph=True)
 
     
-    print(net1.weight.grad)
-    print(net2.weight.grad)
+    print((net1.weight.grad))
+    print((net2.weight.grad))
 
     opt = torch.optim.SGD(all_params, lr=0.1)
     opt.step()
 
-    print(net1.weight)
-    print(net2.weight)
+    print((net1.weight))
+    print((net2.weight))
     #net1.weight.data = net1.weight.data - 0.1 * net1.weight.grad.data
 
     for p in net2.parameters():
@@ -223,27 +223,27 @@ def torch_test_grad():
         p.requires_grad=False
     
     loss2.backward()
-    print(net1.weight)
-    print(net2.weight.grad)
-    print(net1.weight.grad)
+    print((net1.weight))
+    print((net2.weight.grad))
+    print((net1.weight.grad))
     
     net1.zero_grad()
-    print(net1.weight.grad)
+    print((net1.weight.grad))
 
 def test_logic():
     a = torch.ByteTensor([1,0,0,0,0])
     b = torch.ByteTensor([1,1,1,0,0])
 
-    print ~a
-    print a & b
-    print a | b
+    print(~a)
+    print(a & b)
+    print(a | b)
 
     text_lengths = torch.IntTensor([2,4,3]).cuda()
     mel_hidden_lengths =torch.IntTensor([5,6,5]).cuda()
     contrast_mask1 =  get_mask_from_lengths(text_lengths).unsqueeze(2).expand(-1, -1, 6) # [B, text_len] -> [B, text_len, T/r]
     contrast_mask2 = get_mask_from_lengths(mel_hidden_lengths).unsqueeze(1).expand(-1, 4, -1) # [B, T/r] -> [B, text_len, T/r]
     contrast_mask = contrast_mask1 & contrast_mask2 
-    print contrast_mask
+    print(contrast_mask)
  
 if __name__ == '__main__':
 

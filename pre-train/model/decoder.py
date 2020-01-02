@@ -2,8 +2,8 @@ import torch
 from torch.autograd import Variable
 from torch import nn
 from torch.nn import functional as F
-from basic_layers import ConvNorm, LinearNorm, ForwardAttentionV2, Prenet
-from utils import get_mask_from_lengths
+from .basic_layers import ConvNorm, LinearNorm, ForwardAttentionV2, Prenet
+from .utils import get_mask_from_lengths
 
 
 class Decoder(nn.Module):

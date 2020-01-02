@@ -69,7 +69,7 @@ path_save += '_seen' if test_list == tlist else '_unseen'
 if not os.path.exists(path_save):
     os.makedirs(path_save)
 
-print path_save
+print(path_save)
 
 def recover_wav(mel, wav_path, ismel=False, 
         n_fft=2048, win_length=800,hop_length=200):
@@ -114,7 +114,7 @@ def levenshteinDistance(s1, s2):
     if len(s1) > len(s2):
         s1, s2 = s2, s1
 
-    distances = range(len(s1) + 1)
+    distances = list(range(len(s1) + 1))
     for i2, c2 in enumerate(s2):
         distances_ = [i2+1]
         for i1, c1 in enumerate(s1):
@@ -135,7 +135,7 @@ with torch.no_grad():
             break
         
         sample_id = sample_list[i].split('/')[-1][9:17]
-        print('%d index %s, decoding ...'%(i,sample_id))
+        print(('%d index %s, decoding ...'%(i,sample_id)))
 
         x, y = model.parse_batch(batch)
         predicted_mel, post_output, predicted_gate, alignments, \
@@ -170,18 +170,18 @@ with torch.no_grad():
         target_text = y[0].data.cpu().numpy()[0]
         target_text = [id2ph[id] for id in target_text[:]]
 
-        print 'Sounds like %s, Decoded text is '%(id2sp[speaker_id])
+        print('Sounds like %s, Decoded text is '%(id2sp[speaker_id]))
 
-        print audio_seq2seq_phids
-        print target_text
+        print(audio_seq2seq_phids)
+        print(target_text)
        
         err = levenshteinDistance(audio_seq2seq_phids, target_text)
-        print err, len(target_text)
+        print(err, len(target_text))
 
         errs += err
         totalphs += len(target_text)
 
-print float(errs)/float(totalphs)
+print(float(errs)/float(totalphs))
 
         
         
