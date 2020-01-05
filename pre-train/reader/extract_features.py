@@ -23,18 +23,18 @@ def extract_mel_spec(filename):
 
     mel_spectrogram = librosa.feature.melspectrogram(S=spec, 
                                                      sr=sample_rate, 
-                                                     n_mels=n_mels,
+                                                     n_mels=80,
                                                      power=1.0, #actually not used given "S=spec"
                                                      fmin=0.0,
                                                      fmax=None,
-                                                     htk=False
+                                                     htk=False,
                                                      norm=1
                                                      )
     log_mel_spectrogram = np.log(mel_spectrogram).astype(np.float32)
 
 
     
-    np.save(file=filename.replace(".wav", ".spec"), arr=log_spectrogram])
+    np.save(file=filename.replace(".wav", ".spec"), arr=log_spectrogram)
     np.save(file=filename.replace(".wav", ".mel"), arr=log_mel_spectrogram)
 
 
