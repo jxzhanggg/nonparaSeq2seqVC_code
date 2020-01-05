@@ -8,7 +8,7 @@ For audio samples, please visit our [demo page](https://jxzhanggg.github.io/nonp
 
 ## Dependencies
 
-* Python 2.7
+* Python 3.6
 * PyTorch 1.0.1
 * CUDA 10.0
 
