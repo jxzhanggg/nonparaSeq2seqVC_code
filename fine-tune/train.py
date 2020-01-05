@@ -88,9 +88,9 @@ def load_model(hparams):
 
 
 def warm_start_model(checkpoint_path, model):
-    print checkpoint_path
+    print(checkpoint_path)
     assert os.path.isfile(checkpoint_path)
-    print("Warm starting model from checkpoint '{}'".format(checkpoint_path))
+    print(("Warm starting model from checkpoint '{}'".format(checkpoint_path)))
     checkpoint_dict = torch.load(checkpoint_path, map_location='cpu')
     model.load_state_dict(checkpoint_dict['state_dict'], strict=False)
     return model
@@ -98,21 +98,21 @@ def warm_start_model(checkpoint_path, model):
 
 def load_checkpoint(checkpoint_path, model, optimizer_main, optimizer_sc):
     assert os.path.isfile(checkpoint_path)
-    print("Loading checkpoint '{}'".format(checkpoint_path))
+    print(("Loading checkpoint '{}'".format(checkpoint_path)))
     checkpoint_dict = torch.load(checkpoint_path, map_location='cpu')
     model.load_state_dict(checkpoint_dict['state_dict'])
     optimizer_main.load_state_dict(checkpoint_dict['optimizer_main'])
     optimizer_sc.load_state_dict(checkpoint_dict['optimizer_sc'])
     learning_rate = checkpoint_dict['learning_rate']
     iteration = checkpoint_dict['iteration']
-    print("Loaded checkpoint '{}' from iteration {}" .format(
-        checkpoint_path, iteration))
+    print(("Loaded checkpoint '{}' from iteration {}" .format(
+        checkpoint_path, iteration)))
     return model, optimizer_main, optimizer_sc, learning_rate, iteration
 
 
 def save_checkpoint(model, optimizer_main, optimizer_sc, learning_rate, iteration, filepath):
-    print("Saving model and optimizer state at iteration {} to {}".format(
-        iteration, filepath))
+    print(("Saving model and optimizer state at iteration {} to {}".format(
+        iteration, filepath)))
     torch.save({'iteration': iteration,
                 'state_dict': model.state_dict(),
                 'optimizer_main': optimizer_main.state_dict(),
@@ -191,7 +191,7 @@ def validate(model, criterion, valset, iteration, batch_size, n_gpus,
 
     model.train()
     if rank == 0:
-        print("Validation loss {}: TTS {:9f}  VC {:9f}".format(iteration, val_loss_tts, val_loss_vc))
+        print(("Validation loss {}: TTS {:9f}  VC {:9f}".format(iteration, val_loss_tts, val_loss_vc)))
         logger.log_validation(val_loss_tts, reduced_val_tts_losses, reduced_val_tts_acces, model, y_tts, y_tts_pred, iteration, 'tts')
         logger.log_validation(val_loss_vc, reduced_val_vc_losses, reduced_val_vc_acces, model, y_vc, y_vc_pred, iteration, 'vc')
 
@@ -325,8 +325,8 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
 
                 duration = time.time() - start
                 task = 'TTS' if i%2 == 0 else 'VC'
-                print("Train {} {} {:.6f} Grad Norm {:.6f} {:.2f}s/it".format(
-                    task, iteration, redl_main+redl_sc, grad_norm_main, duration))
+                print(("Train {} {} {:.6f} Grad Norm {:.6f} {:.2f}s/it".format(
+                    task, iteration, redl_main+redl_sc, grad_norm_main, duration)))
                 logger.log_training(
                     redl_main+redl_sc, reduced_losses, reduced_acces, grad_norm_main, learning_rate, duration, iteration)
 
@@ -369,9 +369,9 @@ if __name__ == '__main__':
     torch.backends.cudnn.enabled = hparams.cudnn_enabled
     torch.backends.cudnn.benchmark = hparams.cudnn_benchmark
 
-    print("Distributed Run:", hparams.distributed_run)
-    print("cuDNN Enabled:", hparams.cudnn_enabled)
-    print("cuDNN Benchmark:", hparams.cudnn_benchmark)
+    print(("Distributed Run:", hparams.distributed_run))
+    print(("cuDNN Enabled:", hparams.cudnn_enabled))
+    print(("cuDNN Benchmark:", hparams.cudnn_benchmark))
 
     train(args.output_directory, args.log_directory, args.checkpoint_path,
           args.warm_start, args.n_gpus, args.rank, args.group_name, hparams)

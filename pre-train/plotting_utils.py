@@ -60,9 +60,9 @@ def plot_spectrogram_to_numpy(spectrogram):
 
 def plot_gate_outputs_to_numpy(gate_targets, gate_outputs):
     fig, ax = plt.subplots(figsize=(12, 3))
-    ax.scatter(range(len(gate_targets)), gate_targets, alpha=0.5,
+    ax.scatter(list(range(len(gate_targets))), gate_targets, alpha=0.5,
                color='green', marker='+', s=1, label='target')
-    ax.scatter(range(len(gate_outputs)), gate_outputs, alpha=0.5,
+    ax.scatter(list(range(len(gate_outputs))), gate_outputs, alpha=0.5,
                color='red', marker='.', s=1, label='predicted')
 
     plt.xlabel("Frames (Green target, Red predicted)")

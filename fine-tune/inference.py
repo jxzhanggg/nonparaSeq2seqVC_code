@@ -110,7 +110,7 @@ def get_path(input_text, A, B):
     if not os.path.exists(os.path.join(path_save,'ali')):
         os.makedirs(os.path.join(path_save,'ali'))
 
-    print path_save
+    print(path_save)
     return path_save
 
 
@@ -126,7 +126,7 @@ def generate(loader, reference_mel, beam_width, path_save, ref_sp,
                 break
             
             sample_id = sample_list[i].split('/')[-1][9:17+4]
-            print('%d index %s, decoding ...'%(i,sample_id))
+            print(('%d index %s, decoding ...'%(i,sample_id)))
 
             x, y = model.parse_batch(batch)
             predicted_mel, post_output, predicted_gate, alignments, \
@@ -164,11 +164,11 @@ def generate(loader, reference_mel, beam_width, path_save, ref_sp,
 
             if not input_text:
                 #print 'Sounds like %s, Decoded text is '%(id2sp[speaker_id])
-                print  audio_seq2seq_phids
-                print  target_text
+                print(audio_seq2seq_phids)
+                print(target_text)
         
             err = levenshteinDistance(audio_seq2seq_phids, target_text)
-            print err, len(target_text)
+            print(err, len(target_text))
 
             errs += err
             totalphs += len(target_text)
@@ -195,12 +195,12 @@ if AB_vc:
     path_save = get_path(False, ref_sp_A, ref_sp_B)
     per_AB = generate(test_loader_A, reference_mel_B, hparams.beam_width,
         path_save, ref_sp_B, sample_list_A, num=gen_num, input_text=False)
-    print('PER %s-to-%s is %.4f'%(ref_sp_A, ref_sp_B, per_AB))
+    print(('PER %s-to-%s is %.4f'%(ref_sp_A, ref_sp_B, per_AB)))
 
 ####### VC B - A #############
 if BA_vc:
     path_save = get_path(False, ref_sp_B, ref_sp_A)
     per_BA = generate(test_loader_B, reference_mel_A, hparams.beam_width,
         path_save, ref_sp_A, sample_list_B, num=gen_num, input_text=False)
-    print('PER %s-to-%s is %.4f'%(ref_sp_B, ref_sp_A, per_BA))
+    print(('PER %s-to-%s is %.4f'%(ref_sp_B, ref_sp_A, per_BA)))
 

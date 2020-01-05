@@ -1,5 +1,5 @@
 
-from __future__ import division
+
 import torch
 from .penalties import PenaltyBuilder
 
@@ -221,7 +221,7 @@ class GNMTGlobalScorer(object):
         """
         Function to update scores of a Beam that is not finished
         """
-        if "prev_penalty" in beam.global_state.keys():
+        if "prev_penalty" in list(beam.global_state.keys()):
             beam.scores.add_(beam.global_state["prev_penalty"])
             penalty = self.cov_penalty(beam,
                                        beam.global_state["coverage"] + attn,
