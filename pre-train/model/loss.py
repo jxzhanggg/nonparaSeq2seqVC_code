@@ -26,11 +26,11 @@ class ParrotLoss(nn.Module):
 
     def parse_targets(self, targets, text_lengths):
         '''
-        mel_target [batch_size, mel_bins, T]
-        speaker_target [batch_size]
         text_target [batch_size, text_len]
+        mel_target [batch_size, mel_bins, T]
+        spc_target [batch_size, spc_bins, T]
+        speaker_target [batch_size]
         gate_target [batch_size, T]
-        hard_alignments [batch_size, text_len, T]
         '''
         text_target, mel_target, spc_target, speaker_target, gate_target = targets
 
@@ -52,12 +52,16 @@ class ParrotLoss(nn.Module):
         '''
         predicted_mel [batch_size, mel_bins, T]
         predicted_gate [batch_size, T/r]
-        alignment input_text==True [batch_size, T/r, max_text_len] or input_text==False [batch_size, T/r, T/r]
+        alignment 
+            when input_text==True [batch_size, T/r, max_text_len] 
+            when input_text==False [batch_size, T/r, T/r]
         text_hidden [B, max_text_len, hidden_dim]
         mel_hidden [B, max_text_len, hidden_dim]
+        text_logit_from_mel_hidden [B, max_text_len+1, n_symbols+1]
         speaker_logit_from_mel [B, n_speakers]
         speaker_logit_from_mel_hidden [B, max_text_len, n_speakers]
-        text_logit_from_mel_hidden [B, max_text_len+1, n_symbols+1]
+        text_lengths [B,]
+        mel_lengths [B,]
         '''
         predicted_mel, post_output, predicted_gate, alignments,\
             text_hidden, mel_hidden, text_logit_from_mel_hidden, \
@@ -169,7 +173,5 @@ class ParrotLoss(nn.Module):
 
         combined_loss2 = self.spcla_w * speaker_classification_loss
         
-
-
         return loss_list, acc_list, combined_loss1, combined_loss2
 

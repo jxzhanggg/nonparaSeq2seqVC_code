@@ -104,7 +104,7 @@ class TextMelIDCollate():
 
     def __call__(self, batch):
         '''
-        batch is list of (text_input, text_targets, mel, speaker_id)
+        batch is list of (text_input, mel, spc, speaker_id)
         '''
         text_lengths = torch.IntTensor([len(x[0]) for x in batch])
         mel_lengths = torch.IntTensor([x[2].size(1) for x in batch])

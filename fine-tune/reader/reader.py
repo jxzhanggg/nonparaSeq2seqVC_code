@@ -106,7 +106,7 @@ class TextMelIDCollate():
 
     def __call__(self, batch):
         '''
-        batch is list of (text_input, text_targets, mel, speaker_id)
+        batch is list of (text_input, mel, spc, speaker_id)
         '''
 
         text_lengths = torch.IntTensor([len(x[0]) for x in batch])
@@ -142,7 +142,8 @@ class TextMelIDCollate():
             mel_padded[i,  :, :mel.size(1)] = mel
             spc_padded[i,  :, :spc.size(1)] = spc
             speaker_id[i] = batch[i][3][0]
-            gate_padded[i, mel.size(1)-self.n_frames_per_step:] = 1 #make sure the downsampled gate_padded have the last eng flag 1. 
+            #make sure the downsampled gate_padded have the last eng flag 1. 
+            gate_padded[i, mel.size(1)-self.n_frames_per_step:] = 1 
 
 
         return text_input_padded, mel_padded, spc_padded, speaker_id, \
