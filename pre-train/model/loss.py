@@ -30,13 +30,13 @@ class ParrotLoss(nn.Module):
         mel_target [batch_size, mel_bins, T]
         spc_target [batch_size, spc_bins, T]
         speaker_target [batch_size]
-        gate_target [batch_size, T]
+        stop_target [batch_size, T]
         '''
-        text_target, mel_target, spc_target, speaker_target, gate_target = targets
+        text_target, mel_target, spc_target, speaker_target, stop_target = targets
 
-        B = gate_target.size(0)
-        gate_target = gate_target.reshape(B, -1, self.n_frames_per_step)
-        gate_target = gate_target[:, :, 0]
+        B = stop_target.size(0)
+        stop_target = stop_target.reshape(B, -1, self.n_frames_per_step)
+        stop_target = stop_target[:, :, 0]
 
         padded = torch.tensor(text_target.data.new(B,1).zero_())
         text_target = torch.cat((text_target, padded), dim=-1)
@@ -45,13 +45,13 @@ class ParrotLoss(nn.Module):
         for bid in range(B):
             text_target[bid, text_lengths[bid].item()] = self.eos
 
-        return text_target, mel_target, spc_target, speaker_target, gate_target
+        return text_target, mel_target, spc_target, speaker_target, stop_target
     
     def forward(self, model_outputs, targets, input_text, eps=1e-5):
 
         '''
         predicted_mel [batch_size, mel_bins, T]
-        predicted_gate [batch_size, T/r]
+        predicted_stop [batch_size, T/r]
         alignment 
             when input_text==True [batch_size, T/r, max_text_len] 
             when input_text==False [batch_size, T/r, T/r]
@@ -63,20 +63,20 @@ class ParrotLoss(nn.Module):
         text_lengths [B,]
         mel_lengths [B,]
         '''
-        predicted_mel, post_output, predicted_gate, alignments,\
+        predicted_mel, post_output, predicted_stop, alignments,\
             text_hidden, mel_hidden, text_logit_from_mel_hidden, \
             audio_seq2seq_alignments, \
             speaker_logit_from_mel, speaker_logit_from_mel_hidden, \
              text_lengths, mel_lengths = model_outputs
 
-        text_target, mel_target, spc_target, speaker_target, gate_target  = self.parse_targets(targets, text_lengths)
+        text_target, mel_target, spc_target, speaker_target, stop_target  = self.parse_targets(targets, text_lengths)
 
         ## get masks ##
         mel_mask = get_mask_from_lengths(mel_lengths, mel_target.size(2)).unsqueeze(1).expand(-1, mel_target.size(1), -1).float()
         spc_mask = get_mask_from_lengths(mel_lengths, mel_target.size(2)).unsqueeze(1).expand(-1, spc_target.size(1), -1).float()
 
         mel_step_lengths = torch.ceil(mel_lengths.float() / self.n_frames_per_step).long()
-        gate_mask = get_mask_from_lengths(mel_step_lengths, 
+        stop_mask = get_mask_from_lengths(mel_step_lengths, 
                                     mel_target.size(2)/self.n_frames_per_step).float() # [B, T/r]
         text_mask = get_mask_from_lengths(text_lengths).float()
         text_mask_plus_one = get_mask_from_lengths(text_lengths + 1).float()
@@ -89,7 +89,7 @@ class ParrotLoss(nn.Module):
         else:
             recon_loss_post = (self.L1Loss(post_output, mel_target) * mel_mask).sum() / torch.sum(mel_mask)
         
-        gate_loss = torch.sum(self.BCEWithLogitsLoss(predicted_gate, gate_target) * gate_mask) / torch.sum(gate_mask)
+        stop_loss = torch.sum(self.BCEWithLogitsLoss(predicted_stop, stop_target) * stop_mask) / torch.sum(stop_mask)
 
 
         if self.contr_w == 0.:
@@ -160,14 +160,14 @@ class ParrotLoss(nn.Module):
         else:
             speaker_adversial_loss = torch.sum(loss * mask) / torch.sum(mask)
         
-        loss_list = [recon_loss, recon_loss_post,  gate_loss,
+        loss_list = [recon_loss, recon_loss_post,  stop_loss,
                 contrast_loss, consist_loss, speaker_encoder_loss, speaker_classification_loss,
                 text_classification_loss, speaker_adversial_loss]
             
         acc_list = [speaker_encoder_acc, speaker_classification_acc, text_classification_acc]
         
         
-        combined_loss1 = recon_loss + recon_loss_post + gate_loss + self.contr_w * contrast_loss + self.consi_w * consist_loss + \
+        combined_loss1 = recon_loss + recon_loss_post + stop_loss + self.contr_w * contrast_loss + self.consi_w * consist_loss + \
             self.spenc_w * speaker_encoder_loss +  self.texcl_w * text_classification_loss + \
             self.spadv_w * speaker_adversial_loss
 

@@ -42,6 +42,17 @@ class TextMelIDLoader(torch.utils.data.Dataset):
         self.mel_mean_std = np.float32(np.load(mean_std_file))
         self.spc_mean_std = np.float32(np.load(mean_std_file.replace('mel', 'spec')))
 
+    def get_path_id(self, path):
+        # Custom this function to obtain paths and speaker id
+        # Deduce filenames
+        spec_path = path
+        text_path = path.replace('spec', 'text').replace('npy', 'txt').replace('log-', '')
+        mel_path = path.replace('spec', 'mel')
+        speaker_id = path.split('/')[-2]
+
+        return mel_path, spec_path, text_path, speaker_id
+
+
     def get_text_mel_id_pair(self, path):
         '''
         You should Modify this function to read your own data.
@@ -56,14 +67,11 @@ class TextMelIDLoader(torch.utils.data.Dataset):
         speaker_id: [1]
         '''
 
-        # Deduce filenames
-        text_path = path.replace('spec', 'text').replace('npy', 'txt').replace('log-', '')
-        mel_path = path.replace('spec', 'mel')
-        speaker_id = path.split('/')[-2]
+        mel_path, spec_path, text_path, speaker_id = self.get_path_id(path)
         # Load data from disk
         text_input = self.get_text(text_path)
         mel = np.load(mel_path)
-        spc = np.load(path)
+        spc = np.load(spec_path)
         # Normalize audio 
         mel = (mel - self.mel_mean_std[0])/ self.mel_mean_std[1]
         spc = (spc - self.spc_mean_std[0]) / self.spc_mean_std[1]
@@ -122,13 +130,13 @@ class TextMelIDCollate():
         spc_padded = torch.FloatTensor(len(batch), spc_bin, max_mel_len)
 
         speaker_id = torch.LongTensor(len(batch))
-        gate_padded = torch.FloatTensor(len(batch), max_mel_len)
+        stop_token_padded = torch.FloatTensor(len(batch), max_mel_len)
 
         text_input_padded.zero_()
         mel_padded.zero_()
         spc_padded.zero_()
         speaker_id.zero_()
-        gate_padded.zero_()
+        stop_token_padded.zero_()
 
         for i in range(len(batch)):
             text =  batch[i][0]
@@ -139,9 +147,9 @@ class TextMelIDCollate():
             mel_padded[i,  :, :mel.size(1)] = mel
             spc_padded[i,  :, :spc.size(1)] = spc
             speaker_id[i] = batch[i][3][0]
-            # make sure the downsampled gate_padded have the last eng flag 1. 
-            gate_padded[i, mel.size(1)-self.n_frames_per_step:] = 1
+            # make sure the downsampled stop_token_padded have the last eng flag 1. 
+            stop_token_padded[i, mel.size(1)-self.n_frames_per_step:] = 1
 
         return text_input_padded, mel_padded, spc_padded, speaker_id, \
-                    text_lengths, mel_lengths, gate_padded
+                    text_lengths, mel_lengths, stop_token_padded
     

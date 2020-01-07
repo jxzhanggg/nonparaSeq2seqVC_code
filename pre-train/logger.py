@@ -20,7 +20,7 @@ class ParrotLogger(SummaryWriter):
         self.add_scalar("training.loss", reduced_loss, iteration)
         self.add_scalar("training.loss.recon", reduced_losses[0], iteration)
         self.add_scalar("training.loss.recon_post", reduced_losses[1], iteration)
-        self.add_scalar("training.loss.gate",  reduced_losses[2], iteration)
+        self.add_scalar("training.loss.stop",  reduced_losses[2], iteration)
         self.add_scalar("training.loss.contr", reduced_losses[3], iteration)
         self.add_scalar("training.loss.consi", reduced_losses[4], iteration)
         self.add_scalar("training.loss.spenc", reduced_losses[5], iteration)
@@ -42,7 +42,7 @@ class ParrotLogger(SummaryWriter):
         self.add_scalar('validation.loss.%s'%task, reduced_loss, iteration)
         self.add_scalar("validation.loss.%s.recon"%task, reduced_losses[0], iteration)
         self.add_scalar("validation.loss.%s.recon_post"%task, reduced_losses[1], iteration)
-        self.add_scalar("validation.loss.%s.gate"%task,  reduced_losses[2], iteration)
+        self.add_scalar("validation.loss.%s.stop"%task,  reduced_losses[2], iteration)
         self.add_scalar("validation.loss.%s.contr"%task, reduced_losses[3], iteration)
         self.add_scalar("validation.loss.%s.consi"%task, reduced_losses[4], iteration)
         self.add_scalar("validation.loss.%s.spenc"%task, reduced_losses[5], iteration)
@@ -54,23 +54,23 @@ class ParrotLogger(SummaryWriter):
         self.add_scalar('validation.acc.%s.spcla'%task, reduced_acces[1], iteration)
         self.add_scalar('validatoin.acc.%s.texcl'%task, reduced_acces[2], iteration)
         
-        predicted_mel, post_output, predicted_gate, alignments, \
+        predicted_mel, post_output, predicted_stop, alignments, \
             text_hidden, mel_hidden,  text_logit_from_mel_hidden, \
             audio_seq2seq_alignments, \
             speaker_logit_from_mel, speaker_logit_from_mel_hidden, \
             text_lengths, mel_lengths = y_pred
 
-        text_target, mel_target, spc_target, speaker_target,  gate_target  = y
+        text_target, mel_target, spc_target, speaker_target,  stop_target  = y
 
-        gate_target = gate_target.reshape(gate_target.size(0), -1, int(gate_target.size(1)/predicted_gate.size(1)))
-        gate_target = gate_target[:,:,0]
+        stop_target = stop_target.reshape(stop_target.size(0), -1, int(stop_target.size(1)/predicted_stop.size(1)))
+        stop_target = stop_target[:,:,0]
 
         # plot distribution of parameters
         #for tag, value in model.named_parameters():
         #    tag = tag.replace('.', '/')
         #    self.add_histogram(tag, value.data.cpu().numpy(), iteration)
 
-        # plot alignment, mel target and predicted, gate target and predicted
+        # plot alignment, mel target and predicted, stop target and predicted
         idx = random.randint(0, alignments.size(0) - 1)
 
         alignments = alignments.data.cpu().numpy()
@@ -110,8 +110,8 @@ class ParrotLogger(SummaryWriter):
             iteration)
 
         self.add_image(
-            "%s.gate"%task,
+            "%s.stop"%task,
             plot_gate_outputs_to_numpy(
-                gate_target[idx].data.cpu().numpy(),
-                F.sigmoid(predicted_gate[idx]).data.cpu().numpy()),
+                stop_target[idx].data.cpu().numpy(),
+                F.sigmoid(predicted_stop[idx]).data.cpu().numpy()),
             iteration)

@@ -84,7 +84,7 @@ def create_hparams(hparams_string=None, verbose=False):
         decoder_rnn_dim=512,
         prenet_dim=[256,256],
         max_decoder_steps=1000,
-        gate_threshold=0.5,
+        stop_threshold=0.5,
     
         # Attention parameters
         attention_rnn_dim=512,

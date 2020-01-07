@@ -138,7 +138,7 @@ with torch.no_grad():
         print(('%d index %s, decoding ...'%(i,sample_id)))
 
         x, y = model.parse_batch(batch)
-        predicted_mel, post_output, predicted_gate, alignments, \
+        predicted_mel, post_output, predicted_stop, alignments, \
             text_hidden, audio_seq2seq_hidden, audio_seq2seq_phids, audio_seq2seq_alignments, \
             speaker_id = model.inference(x, input_text, reference_mel, hparams.beam_width)
 

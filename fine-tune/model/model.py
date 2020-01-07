@@ -70,7 +70,7 @@ class Parrot(nn.Module):
 
     def parse_batch(self, batch):
         text_input_padded, mel_padded, spc_padded, speaker_id, \
-                    text_lengths, mel_lengths, gate_padded = batch
+                    text_lengths, mel_lengths, stop_token_padded = batch
         
         text_input_padded = to_gpu(text_input_padded).long()
         mel_padded = to_gpu(mel_padded).float()
@@ -78,10 +78,10 @@ class Parrot(nn.Module):
         speaker_id = to_gpu(speaker_id).long()
         text_lengths = to_gpu(text_lengths).long()
         mel_lengths = to_gpu(mel_lengths).long()
-        gate_padded = to_gpu(gate_padded).float()
+        stop_token_padded = to_gpu(stop_token_padded).float()
 
         return ((text_input_padded, mel_padded, text_lengths, mel_lengths, speaker_id),
-                (text_input_padded, mel_padded, spc_padded,  speaker_id, gate_padded))
+                (text_input_padded, mel_padded, spc_padded,  speaker_id, stop_token_padded))
 
 
     def forward(self, inputs, input_text):
@@ -119,11 +119,11 @@ class Parrot(nn.Module):
         L = hidden.size(1)
         hidden = torch.cat([hidden, speaker_embedding.unsqueeze(1).expand(-1, L, -1)], -1)
 
-        predicted_mel, predicted_gate, alignments = self.decoder(hidden, mel_padded, text_lengths)
+        predicted_mel, predicted_stop, alignments = self.decoder(hidden, mel_padded, text_lengths)
 
         post_output = self.postnet(predicted_mel)
 
-        outputs = [predicted_mel, post_output, predicted_gate, alignments,
+        outputs = [predicted_mel, post_output, predicted_stop, alignments,
                   text_hidden, audio_seq2seq_hidden, audio_seq2seq_logit, audio_seq2seq_alignments,
                   speaker_logit_from_mel_hidden,
                   text_lengths, mel_lengths]
@@ -166,11 +166,11 @@ class Parrot(nn.Module):
         L = hidden.size(1)
         hidden = torch.cat([hidden, speaker_embedding.unsqueeze(1).expand(-1, L, -1)], -1)
           
-        predicted_mel, predicted_gate, alignments = self.decoder.inference(hidden)
+        predicted_mel, predicted_stop, alignments = self.decoder.inference(hidden)
 
         post_output = self.postnet(predicted_mel)
 
-        return (predicted_mel, post_output, predicted_gate, alignments,
+        return (predicted_mel, post_output, predicted_stop, alignments,
             text_hidden, audio_seq2seq_hidden, audio_seq2seq_phids, audio_seq2seq_alignments,
             speaker_id)
 

@@ -16,7 +16,7 @@ class Decoder(nn.Module):
         self.decoder_rnn_dim = hparams.decoder_rnn_dim
         self.prenet_dim = hparams.prenet_dim
         self.max_decoder_steps = hparams.max_decoder_steps
-        self.gate_threshold = hparams.gate_threshold
+        self.stop_threshold = hparams.stop_threshold
         self.feed_back_last = hparams.feed_back_last
 
         if hparams.feed_back_last:
@@ -46,7 +46,7 @@ class Decoder(nn.Module):
             self.hidden_cat_dim + hparams.decoder_rnn_dim,
             hparams.n_mel_channels * hparams.n_frames_per_step_decoder)
 
-        self.gate_layer = LinearNorm(
+        self.stop_layer = LinearNorm(
             self.hidden_cat_dim + hparams.decoder_rnn_dim, 1,
             bias=True, w_init_gain='sigmoid')
 
@@ -126,28 +126,28 @@ class Decoder(nn.Module):
         
         return decoder_inputs
 
-    def parse_decoder_outputs(self, mel_outputs, gate_outputs, alignments):
+    def parse_decoder_outputs(self, mel_outputs, stop_outputs, alignments):
         """ Prepares decoder outputs for output
         PARAMS
         ------
         mel_outputs:
-        gate_outputs: gate output energies
+        stop_outputs: stop output energies
         alignments:
         RETURNS
         -------
         mel_outputs:
-        gate_outpust: gate output energies
+        stop_outpust: stop output energies
         alignments:
         """
         # (T_out, B, MAX_TIME) -> (B, T_out, MAX_TIME)
         alignments = torch.stack(alignments).transpose(0, 1)
         # (T_out, B) -> (B, T_out)
         if alignments.size(0) == 1:
-            gate_outputs = torch.stack(gate_outputs).unsqueeze(0)
+            stop_outputs = torch.stack(stop_outputs).unsqueeze(0)
         else:
-            gate_outputs = torch.stack(gate_outputs).transpose(0, 1)
+            stop_outputs = torch.stack(stop_outputs).transpose(0, 1)
         
-        gate_outputs = gate_outputs.contiguous()
+        stop_outputs = stop_outputs.contiguous()
         # (T_out, B, n_mel_channels) -> (B, T_out, n_mel_channels)
         mel_outputs = torch.stack(mel_outputs).transpose(0, 1).contiguous()
         # decouple frames per step
@@ -156,7 +156,7 @@ class Decoder(nn.Module):
         # (B, T_out, n_mel_channels) -> (B, n_mel_channels, T_out)
         mel_outputs = mel_outputs.transpose(1, 2)
 
-        return mel_outputs, gate_outputs, alignments
+        return mel_outputs, stop_outputs, alignments
 
     def attend(self, decoder_input):
         cell_input = torch.cat((decoder_input, self.attention_context), -1)
@@ -195,7 +195,7 @@ class Decoder(nn.Module):
         RETURNS
         -------
         mel_outputs: mel outputs from the decoder   [B, mel_bin, T]
-        gate_outputs: gate outputs from the decoder [B, T/r]
+        stop_outputs: stop outputs from the decoder [B, T/r]
         alignments: sequence of attention weights from the decoder [B, T/r, encoder_max_time]
         """
 
@@ -207,7 +207,7 @@ class Decoder(nn.Module):
         self.initialize_decoder_states(
             memory, mask=~get_mask_from_lengths(memory_lengths))
 
-        mel_outputs, gate_outputs, alignments = [], [], []
+        mel_outputs, stop_outputs, alignments = [], [], []
         while len(mel_outputs) < decoder_inputs.size(0) - 1:
             decoder_input = decoder_inputs[len(mel_outputs)]
 
@@ -219,16 +219,16 @@ class Decoder(nn.Module):
                 (decoder_rnn_output, context), dim=1)
             
             mel_output = self.linear_projection(decoder_hidden_attention_context)
-            gate_output = self.gate_layer(decoder_hidden_attention_context)
+            stop_output = self.stop_layer(decoder_hidden_attention_context)
 
             mel_outputs += [mel_output.squeeze(1)] #? perhaps don't need squeeze
-            gate_outputs += [gate_output.squeeze()]
+            stop_outputs += [stop_output.squeeze()]
             alignments += [attention_weights]
 
-        mel_outputs, gate_outputs, alignments = self.parse_decoder_outputs(
-            mel_outputs, gate_outputs, alignments)
+        mel_outputs, stop_outputs, alignments = self.parse_decoder_outputs(
+            mel_outputs, stop_outputs, alignments)
 
-        return mel_outputs, gate_outputs, alignments
+        return mel_outputs, stop_outputs, alignments
 
     def inference(self, memory):
         """ Decoder inference
@@ -238,33 +238,33 @@ class Decoder(nn.Module):
         RETURNS
         -------
         mel_outputs: mel outputs from the decoder
-        gate_outputs: gate outputs from the decoder
+        stop_outputs: stop outputs from the decoder
         alignments: sequence of attention weights from the decoder
         """
         decoder_input = self.get_go_frame(memory)
 
         self.initialize_decoder_states(memory, mask=None)
 
-        mel_outputs, gate_outputs, alignments = [], [], []
+        mel_outputs, stop_outputs, alignments = [], [], []
         while True:
             decoder_input = self.prenet(decoder_input)
 
             decoder_input_final, context, alignment = self.attend(decoder_input)
 
-            #mel_output, gate_output, alignment = self.decode(decoder_input)
+            #mel_output, stop_output, alignment = self.decode(decoder_input)
             decoder_rnn_output = self.decode(decoder_input_final)
             decoder_hidden_attention_context = torch.cat(
                 (decoder_rnn_output, context), dim=1)
             
             mel_output = self.linear_projection(decoder_hidden_attention_context)
-            gate_output = self.gate_layer(decoder_hidden_attention_context)
+            stop_output = self.stop_layer(decoder_hidden_attention_context)
 
             mel_outputs += [mel_output.squeeze(1)]
-            gate_outputs += [gate_output]
+            stop_outputs += [stop_output]
             alignments += [alignment]
 
 
-            if torch.sigmoid(gate_output.data) > self.gate_threshold:
+            if torch.sigmoid(stop_output.data) > self.stop_threshold:
                 break
             elif len(mel_outputs) == self.max_decoder_steps:
                 print("Warning! Reached max decoder steps")
@@ -275,7 +275,7 @@ class Decoder(nn.Module):
             else:
                 decoder_input = mel_output
 
-        mel_outputs, gate_outputs, alignments = self.parse_decoder_outputs(
-            mel_outputs, gate_outputs, alignments)
+        mel_outputs, stop_outputs, alignments = self.parse_decoder_outputs(
+            mel_outputs, stop_outputs, alignments)
 
-        return mel_outputs, gate_outputs, alignments
+        return mel_outputs, stop_outputs, alignments
