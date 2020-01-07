@@ -79,7 +79,7 @@ class ParrotLoss(nn.Module):
 
         mel_step_lengths = torch.ceil(mel_lengths.float() / self.n_frames_per_step).long()
         stop_mask = get_mask_from_lengths(mel_step_lengths, 
-                                    mel_target.size(2)/self.n_frames_per_step).float() # [B, T/r]
+                                    int(mel_target.size(2)/self.n_frames_per_step)).float() # [B, T/r]
         text_mask = get_mask_from_lengths(text_lengths).float()
         text_mask_plus_one = get_mask_from_lengths(text_lengths + 1).float()
 

@@ -115,9 +115,9 @@ class TextMelIDCollate():
         batch is list of (text_input, mel, spc, speaker_id)
         '''
         text_lengths = torch.IntTensor([len(x[0]) for x in batch])
-        mel_lengths = torch.IntTensor([x[2].size(1) for x in batch])
-        mel_bin = batch[0][2].size(0)
-        spc_bin = batch[0][3].size(0)
+        mel_lengths = torch.IntTensor([x[1].size(1) for x in batch])
+        mel_bin = batch[0][1].size(0)
+        spc_bin = batch[0][2].size(0)
 
         max_text_len = torch.max(text_lengths).item()
         max_mel_len = torch.max(mel_lengths).item()

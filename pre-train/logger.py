@@ -79,7 +79,7 @@ class ParrotLogger(SummaryWriter):
         self.add_image(
             "%s.alignment"%task,
             plot_alignment_to_numpy(alignments[idx].T),
-            iteration)
+            iteration, dataformats='HWC')
         
         # plot more alignments
         plot_alignment(alignments[:4], self.ali_path+'/step-%d-%s.pdf'%(iteration, task))
@@ -87,31 +87,31 @@ class ParrotLogger(SummaryWriter):
         self.add_image(
             "%s.audio_seq2seq_alignment"%task,
             plot_alignment_to_numpy(audio_seq2seq_alignments[idx].T),
-            iteration)
+            iteration, dataformats='HWC')
 
         self.add_image(
             "%s.mel_target"%task,
             plot_spectrogram_to_numpy(mel_target[idx].data.cpu().numpy()),
-            iteration)
+            iteration, dataformats='HWC')
         
         self.add_image(
             "%s.mel_predicted"%task,
             plot_spectrogram_to_numpy(predicted_mel[idx].data.cpu().numpy()),
-            iteration)
+            iteration, dataformats='HWC')
         
         self.add_image(
             "%s.spc_target"%task,
             plot_spectrogram_to_numpy(spc_target[idx].data.cpu().numpy()),
-            iteration)
+            iteration, dataformats='HWC')
         
         self.add_image(
             "%s.post_predicted"%task,
             plot_spectrogram_to_numpy(post_output[idx].data.cpu().numpy()),
-            iteration)
+            iteration, dataformats='HWC')
 
         self.add_image(
             "%s.stop"%task,
             plot_gate_outputs_to_numpy(
                 stop_target[idx].data.cpu().numpy(),
                 F.sigmoid(predicted_stop[idx]).data.cpu().numpy()),
-            iteration)
+            iteration, dataformats='HWC')

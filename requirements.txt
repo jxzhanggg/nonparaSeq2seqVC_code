@@ -6,3 +6,4 @@ tensorboardX
 matplotlib
 phonemizer
 librosa
+Pillow
