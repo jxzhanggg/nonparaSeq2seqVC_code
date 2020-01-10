@@ -88,6 +88,10 @@ $ cd fine-tune
 $ bash run.sh
 ```
 
+## Training Time
+
+On a single NVIDIA 1080 Ti GPU, with a batch size of 32, pre-training on VCTK takes approximately 64 hours of wall-clock time. Fine-tuning on two speakers (500 utterances each speaker) with this set-up takes approximately 6 hours of wall-clock time.
+
 ## References
 
 * "Non-Parallel Sequence-to-Sequence Voice Conversion with Disentangled Linguistic and Speaker Representations", Jing-Xuan Zhang, Zhen-Hua Ling, Li-Rong Dai, accepted by IEEE/ACM Transactions on Aduio, Speech and Language Processing, 2019.
