@@ -101,7 +101,6 @@ def create_hparams(hparams_string=None, verbose=False):
         batch_size=32,
         
         contrastive_loss_w=30.0,
-        consistent_loss_w=0.0,
         speaker_encoder_loss_w=1.0,
         text_classifier_loss_w=1.0,
         speaker_adversial_loss_w=20.,

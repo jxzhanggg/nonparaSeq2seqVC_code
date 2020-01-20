@@ -8,7 +8,7 @@ def create_hparams(hparams_string=None, verbose=False):
         ################################
         # Experiment Parameters        #
         ################################
-        epochs=60,
+        epochs=70,
         iters_per_checkpoint=100,
         seed=1234,
         dynamic_loss_scaling=True,
@@ -113,7 +113,6 @@ def create_hparams(hparams_string=None, verbose=False):
         decay_every=7,
         
         contrastive_loss_w=30.0,
-        consistent_loss_w=0.0,
         speaker_encoder_loss_w=0.,
         text_classifier_loss_w=1.0,
         speaker_adversial_loss_w=0.2,

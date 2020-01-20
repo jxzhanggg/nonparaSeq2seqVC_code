@@ -16,7 +16,6 @@ class ParrotLoss(nn.Module):
         self.predict_spectrogram = hparams.predict_spectrogram
 
         self.contr_w = hparams.contrastive_loss_w
-        self.consi_w = hparams.consistent_loss_w
         self.spenc_w = hparams.speaker_encoder_loss_w
         self.texcl_w = hparams.text_classifier_loss_w
         self.spadv_w = hparams.speaker_adversial_loss_w
@@ -120,13 +119,6 @@ class ParrotLoss(nn.Module):
                 (1. - hard_alignments) * torch.max(1. - distance_matrix, torch.zeros_like(distance_matrix))
 
             contrast_loss = torch.sum(contrast_loss * contrast_mask) / torch.sum(contrast_mask)
-        
-        if self.consi_w == 0.:
-            consist_loss = torch.tensor(0.).cuda()
-        else:
-            consist_loss = self.MSELoss(text_hidden, mel_hidden)
-            mask = text_mask.unsqueeze(2).expand(-1, -1, text_hidden.size(2))
-            consist_loss = torch.sum(consist_loss * mask)/torch.sum(mask)
 
         n_speakers = speaker_logit_from_mel_hidden.size(2)
         TTEXT = speaker_logit_from_mel_hidden.size(1)
@@ -161,12 +153,12 @@ class ParrotLoss(nn.Module):
         speaker_adversial_loss = torch.sum(loss * mask) / torch.sum(mask)
 
         loss_list = [recon_loss, recon_loss_post,  stop_loss,
-                contrast_loss, consist_loss, speaker_encoder_loss, speaker_classification_loss,
+                contrast_loss,  speaker_encoder_loss, speaker_classification_loss,
                 text_classification_loss, speaker_adversial_loss]
             
         acc_list = [speaker_encoder_acc, speaker_classification_acc, text_classification_acc]
         
-        combined_loss1 = recon_loss + recon_loss_post + stop_loss + self.contr_w * contrast_loss + self.consi_w * consist_loss + \
+        combined_loss1 = recon_loss + recon_loss_post + stop_loss + self.contr_w * contrast_loss +  \
             self.texcl_w * text_classification_loss + \
             self.spadv_w * speaker_adversial_loss
 

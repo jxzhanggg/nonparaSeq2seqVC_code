@@ -28,29 +28,14 @@ $ pip install -r requirements.txt
 
 ### Feature Extraction
 
-#### Extract Mel-Spectrograms
+#### Extract Mel-Spectrograms, Spectrograms and Phonemes
 
-Install and use [deepvoice3_pytorch](https://github.com/r9y9/deepvoice3_pytorch) for extracting audio features.
-
-For VCTK, you can use the following:
-
-```bash
-deepvoice$ python preprocess.py --preset=presets/deepvoice3_vctk.json vctk VCTK-Corpus/ VCTK-processed/
-
-```
-
-#### Extract Phonemes
-
-It's suggested to use the `grapheme-to-phoneme` module of [Festival](http://www.cstr.ed.ac.uk/projects/festival/) to obtain the inputs for the text encoder. An easy way to do this is with the [`phonemizer`](https://github.com/bootphon/phonemizer) tool, with Festival as a backend:
-
-```bash
-$ phonemize -b festival -l en-us transcripts.txt -o transcripts.phones --strip
-```
+You can use [`extract_features.py`](https://github.com/jxzhanggg/nonparaSeq2seqVC_code/blob/master/pre-train/reader/extract_features.py)
 
 
 ### Customize data reader
 
-If you use data other than VCTK or CMU-arctic, you will need to modify the data reader to read your training data. The following are scripts you will need to modify.
+You will need to modify the data reader to read your training data. The following are scripts you will need to modify.
 
 For pre-training:
 
