@@ -79,11 +79,10 @@ On a single NVIDIA 1080 Ti GPU, with a batch size of 32, pre-training on VCTK ta
 
 ## References
 
-* "Non-Parallel Sequence-to-Sequence Voice Conversion with Disentangled Linguistic and Speaker Representations", Jing-Xuan Zhang, Zhen-Hua Ling, Li-Rong Dai, accepted by IEEE/ACM Transactions on Aduio, Speech and Language Processing, 2019.
-* "Sequence-to-Sequence Acoustic Modeling for Voice Conversion", Jing-Xuan Zhang, Zhen-Hua Ling, Li-Juan Liu, Yuan Jiang, Li-Rong Dai, IEEE/ACM Transactions on Audio, Speech and Language Processing, vol. 27, no. 3, pp. 631-644, March 2019.
-* "Forward Attention in Sequence-to-sequence Acoustic Modelling for Speech Synthesis", Jing-Xuan Zhang, Zhen-Hua Ling, Li-Rong Dai, ICASSP, pp. 4789–4793, 2018.
+* "Non-Parallel Sequence-to-Sequence Voice Conversion with Disentangled Linguistic and Speaker Representations", Jing-Xuan Zhang, Zhen-Hua Ling, Li-Rong Dai, accepted by IEEE/ACM Transactions on Aduio, Speech and Language Processing, vol.28, no. 1, pp. 540-552, 2020.
 
 ## Acknowledgements
 
 Part of code was adapted from the following project:
 * https://github.com/NVIDIA/tacotron2/
+* https://github.com/r9y9/deepvoice3_pytorch
