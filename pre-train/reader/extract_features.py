@@ -86,26 +86,29 @@ def extract_dir(root, kind):
     estimate_mean_std(root)
 
 
-def estimate_mean_std(root):
+def estimate_mean_std(root, num=2000):
     '''
     use the training data for estimating mean and standard deviation
+    use $num utterances to avoid out of memory
     '''
     specs, mels = [], []
+    counter_sp, counter_mel = 0, 0
     for dirpath, _, filenames in os.walk(root):
         for f in filenames:
-            if f.endswith('.spec.npy'):
+            if f.endswith('.spec.npy') and counter_sp<num:
                 path = os.path.join(dirpath, f)
                 specs.append(np.load(path))
-            if f.endswith('.mel.npy'):
+                counter_sp += 1
+            if f.endswith('.mel.npy') and counter_mel<num:
                 path = os.path.join(dirpath, f)
                 mels.append(np.load(path))
+                counter_mel += 1
     
     specs = np.vstack(specs)
     mels = np.vstack(mels)
 
     mel_mean = np.mean(mels,axis=0)
     mel_std = np.std(mels, axis=0)
-
     spec_mean = np.mean(specs, axis=0)
     spec_std = np.std(specs, axis=0)
 
