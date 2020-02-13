@@ -8,6 +8,8 @@ import sys
 def extract_mel_spec(filename):
     '''
     extract and save both log-linear and log-Mel spectrograms.
+    saved spec shape [n_frames, 1025]
+    saved mel shape [n_frames, 80]
     '''
     y, sample_rate = librosa.load(filename)
 
@@ -34,8 +36,8 @@ def extract_mel_spec(filename):
 
 
     
-    np.save(file=filename.replace(".wav", ".spec"), arr=log_spectrogram)
-    np.save(file=filename.replace(".wav", ".mel"), arr=log_mel_spectrogram)
+    np.save(file=filename.replace(".wav", ".spec"), arr=log_spectrogram.T)
+    np.save(file=filename.replace(".wav", ".mel"), arr=log_mel_spectrogram.T)
 
 
 def extract_phonemes(filename):
@@ -81,6 +83,39 @@ def extract_dir(root, kind):
             
     pool = Pool(cpu_count())
     pool.map(extraction_function,abs_paths)
+
+    #estimate and save mean std statistics in root dir.
+    estimate_mean_std(root)
+
+
+def estimate_mean_std(root):
+    '''
+    use the training data for estimating mean and standard deviation
+    '''
+    specs, mels = [], []
+    for dirpath, _, filenames in os.walk(root):
+        for f in filenames:
+            if f.endswith('.spec.npy'):
+                path = os.path.join(dirpath, f)
+                specs.append(np.load(path))
+            if f.endswith('.mel.npy'):
+                path = os.path.join(dirpath, f)
+                mels.append(np.load(path))
+    
+    specs = np.vstack(specs)
+    mels = np.vstack(mels)
+
+    mel_mean = np.mean(mels,axis=0)
+    mel_std = np.std(mels, axis=0)
+
+    spec_mean = np.mean(specs, axis=0)
+    spec_std = np.std(specs, axis=0)
+
+    np.save(os.path.join(root,"spec_mean_std.npy"),
+        [spec_mean, spec_std])
+    np.save(os.path.join(root,"mel_mean_std.npy"),
+        [mel_mean, mel_std])
+
         
 if __name__ == "__main__":
     try:
