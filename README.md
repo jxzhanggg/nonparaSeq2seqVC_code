@@ -35,7 +35,9 @@ You can use [`extract_features.py`](https://github.com/jxzhanggg/nonparaSeq2seqV
 
 ### Customize data reader
 
-You will need to modify the data reader to read your training data. The following are scripts you will need to modify.
+Write a snippet of code to walk through the dataset for generating list file for train, valid and test set.
+
+Then you will need to modify the data reader to read your training data. The following are scripts you will need to modify.
 
 For pre-training:
 
