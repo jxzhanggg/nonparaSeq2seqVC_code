@@ -83,7 +83,7 @@ On a single NVIDIA 1080 Ti GPU, with a batch size of 32, pre-training on VCTK ta
 
 If you use this code, please cite:
 ```bibtex
-@article{zhangseq2020, 
+@article{zhangnonpara2020, 
 author={Jing-Xuan {Zhang} and Zhen-Hua {Ling} and Li-Rong {Dai}}, 
 journal={IEEE/ACM Transactions on Audio, Speech, and Language Processing}, 
 title={Non-Parallel Sequence-to-Sequence Voice Conversion with Disentangled Linguistic and Speaker Representations}, 
