@@ -81,7 +81,7 @@ On a single NVIDIA 1080 Ti GPU, with a batch size of 32, pre-training on VCTK ta
 
 ## References
 
-* "Non-Parallel Sequence-to-Sequence Voice Conversion with Disentangled Linguistic and Speaker Representations", Jing-Xuan Zhang, Zhen-Hua Ling, Li-Rong Dai, accepted by IEEE/ACM Transactions on Aduio, Speech and Language Processing, vol.28, no. 1, pp. 540-552, 2020.
+* "Non-Parallel Sequence-to-Sequence Voice Conversion with Disentangled Linguistic and Speaker Representations", Jing-Xuan Zhang, Zhen-Hua Ling, Li-Rong Dai, accepted by IEEE/ACM Transactions on Aduio, Speech and Language Processing, vol. 28, no. 1, pp. 540-552, 2020.
 
 ## Acknowledgements
 
