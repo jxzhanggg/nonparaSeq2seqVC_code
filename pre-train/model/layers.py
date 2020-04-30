@@ -19,7 +19,7 @@ class SpeakerClassifier(nn.Module):
             if i == 0:
                 in_dim = hparams.encoder_embedding_dim
                 out_dim = hparams.SC_hidden_dim
-            elif i == (hparams.SC_n_convolutions-1):
+            else:
                 in_dim = hparams.SC_hidden_dim
                 out_dim = hparams.SC_hidden_dim
             
